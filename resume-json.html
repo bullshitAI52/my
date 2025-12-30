@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曾卫明 | 空间设计经理 - JSON 简历</title>
+    <meta name="description" content="曾卫明，资深空间设计经理，拥有17年商业零售空间全链条管理经验。精通SI开发、工程管理及AI赋能设计。">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #e74c3c;
+            font-size: 18px;
+        }
+        .json-viewer {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .json-toggle {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .json-toggle:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">静态版本</a>
+        <a href="resume-json.html" class="nav-link">JSON 版本</a>
+    </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-header">
+                <div class="name-tag">
+                    <h1 id="resume-name">加载中...</h1>
+                    <p class="title" id="resume-title">空间设计经理</p>
+                </div>
+            </div>
+
+            <div class="contact-section" id="contact-section">
+                <!-- 联系信息会动态加载 -->
+            </div>
+
+            <div class="skills-section">
+                <h3>专业技能</h3>
+                <div class="skill-tags" id="skills-section">
+                    <!-- 技能标签会动态加载 -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="summary-card">
+                <h2>个人优势</h2>
+                <div class="summary-content" id="summary-section">
+                    <!-- 个人优势会动态加载 -->
+                </div>
+            </section>
+
+            <section class="experience-section">
+                <h2>工作经历</h2>
+                <div class="timeline" id="experience-section">
+                    <!-- 工作经历会动态加载 -->
+                </div>
+            </section>
+
+            <section class="projects-section">
+                <h2>重点项目</h2>
+                <div class="project-grid" id="projects-section">
+                    <!-- 项目经历会动态加载 -->
+                </div>
+            </section>
+
+            <section class="education-section">
+                <h2>教育经历</h2>
+                <div id="education-section">
+                    <!-- 教育经历会动态加载 -->
+                </div>
+            </section>
+
+            <!-- JSON 数据查看器 -->
+            <section class="json-section">
+                <h2>JSON 数据</h2>
+                <button class="json-toggle" onclick="toggleJsonViewer()">显示/隐藏 JSON 数据</button>
+                <div class="json-viewer" id="json-viewer" style="display: none;">
+                    <pre id="json-data"></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 显示加载状态
+        document.addEventListener('DOMContentLoaded', function() {
+            loadResumeData();
+        });
+
+        async function loadResumeData() {
+            try {
+                const response = await fetch('曾卫明简历.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const resumeData = await response.json();
+                
+                // 显示 JSON 数据
+                document.getElementById('json-data').textContent = JSON.stringify(resumeData, null, 2);
+                
+                // 渲染简历内容
+                renderResume(resumeData);
+            } catch (error) {
+                console.error('加载简历数据失败:', error);
+                document.getElementById('resume-name').textContent = '加载失败';
+                document.getElementById('resume-title').textContent = '请检查 JSON 文件';
+                document.getElementById('contact-section').innerHTML = 
+                    '<div class="error">无法加载简历数据，请检查控制台错误信息。</div>';
+            }
+        }
+
+        function renderResume(data) {
+            // 基本信息
+            document.getElementById('resume-name').textContent = data.basic.name || '曾卫明';
+            document.getElementById('resume-title').textContent = data.basic.title || '空间设计经理';
+
+            // 联系信息
+            const contactSection = document.getElementById('contact-section');
+            contactSection.innerHTML = `
+                <div class="contact-item">
+                    <span class="icon">📱</span>
+                    <a href="tel:${data.basic.phone || '18059867695'}">${data.basic.phone || '18059867695'}</a>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">✉️</span>
+                    <a href="mailto:${data.basic.email || '64020093@qq.com'}">${data.basic.email || '64020093@qq.com'}</a>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">📍</span>
+                    <span>${data.basic.location || '福建 · 可异地上班'}</span>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">🎓</span>
+                    <span>${data.education[0]?.degree || '大专'} · ${data.education[0]?.major || '艺术设计'}</span>
+                </div>
+            `;
+
+            // 专业技能（从 skillContent 中提取）
+            const skillsSection = document.getElementById('skills-section');
+            const skillKeywords = [
+                '3ds Max', 'Vray', 'SketchUp', 'SU', '酷家乐', 'AutoCAD', 
+                'Illustrator', 'AI', 'Photoshop', 'PS', 'Python', 'AI编程',
+                '空间建模', '渲染', '施工图', '效果图', '品牌视觉', '橱窗设计',
+                'DP点', '陈列道具', '工程量预决算', '模块化', '标准化'
+            ];
+            
+            let skills = [];
+            const skillContent = data.skillContent || '';
+            for (const keyword of skillKeywords) {
+                if (skillContent.includes(keyword)) {
+                    skills.push(keyword);
+                }
+            }
+            
+            if (skills.length === 0) {
+                skills = ['空间设计', '工程管理', '品牌形象开发', '施工监理', '成本控制'];
+            }
+            
+            skillsSection.innerHTML = skills.map(skill => `<span>${skill}</span>`).join('');
+
+            // 个人优势
+            const summarySection = document.getElementById('summary-section');
+            if (data.customData && data.customData['custom-1'] && data.customData['custom-1'][0]) {
+                const advantage = data.customData['custom-1'][0];
+                summarySection.innerHTML = `
+                    <p><strong>${advantage.title || '个人优势'}</strong> ${advantage.subtitle || ''}</p>
+                    <div>${advantage.description || ''}</div>
+                `;
+            } else {
+                summarySection.innerHTML = `
+                    <p><strong>17年商业零售空间全链条管理经验。</strong> 曾深度服务安踏、贵人鸟、Jeep等知名品牌。擅长从品牌形象开发（SI）到全国终端店面落地的全过程管控。</p>
+                    <ul>
+                        <li><strong>工程管理：</strong> 具备专业的施工现场监理及成本控制能力，精通装修材料及工艺标准。</li>
+                        <li><strong>道具研发：</strong> 擅长模块化陈列道具开发，优化结构，提升形象并降低单店成本。</li>
+                        <li><strong>AI 赋能：</strong> 致力推动设计"标准化、流程化与 AI 化"，自主开发三相电路平衡辅助计算代码。</li>
+                    </ul>
+                `;
+            }
+
+            // 工作经历
+            const experienceSection = document.getElementById('experience-section');
+            if (data.experience && data.experience.length > 0) {
+                experienceSection.innerHTML = data.experience.map(exp => `
+                    <div class="timeline-item">
+                        <div class="time-node">${exp.date || ''}</div>
+                        <div class="content">
+                            <h3>${exp.company || ''}</h3>
+                            <p class="role">${exp.position || ''}</p>
+                            <div>${exp.details || ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 项目经历
+            const projectsSection = document.getElementById('projects-section');
+            if (data.projects && data.projects.length > 0) {
+                projectsSection.innerHTML = data.projects.map(proj => `
+                    <div class="project-card">
+                        <h4>${proj.name || ''}</h4>
+                        <p>${proj.description || ''}</p>
+                    </div>
+                `).join('');
+            }
+
+            // 教育经历
+            const educationSection = document.getElementById('education-section');
+            if (data.education && data.education.length > 0) {
+                educationSection.innerHTML = data.education.map(edu => `
+                    <div class="education-item">
+                        <h3>${edu.school || ''}</h3>
+                        <p class="degree">${edu.degree || ''} · ${edu.major || ''}</p>
+                        <p class="date">${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                return date.getFullYear() + '.' + (date.getMonth() + 1).toString().padStart(2, '0');
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        function toggleJsonViewer() {
+            const viewer = document.getElementById('json-viewer');
+            viewer.style.display = viewer.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
