@@ -39,7 +39,7 @@
       "destination": "/test-avatar.html"
     },
     {
-      "source": "/(.*\\.(html|js|css|json|jpg|jpeg|png|ico))",
+      "source": "/(.*\\.(html|js|css|json|jpg|jpeg|png|ico))$",
       "destination": "/$1"
     }
   ]
