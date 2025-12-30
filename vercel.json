@@ -10,20 +10,6 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
-    {
-      "src": "/$",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/(.*\\.(html|js|css|json|jpg|jpeg|png|ico))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -41,8 +27,20 @@
   ],
   "rewrites": [
     {
-      "source": "/(index|resume-json|test-avatar)",
-      "destination": "/$1.html"
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/resume-json",
+      "destination": "/resume-json.html"
+    },
+    {
+      "source": "/test-avatar",
+      "destination": "/test-avatar.html"
+    },
+    {
+      "source": "/(.*\\.(html|js|css|json|jpg|jpeg|png|ico))",
+      "destination": "/$1"
     }
   ]
 }
