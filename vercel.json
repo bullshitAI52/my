@@ -2,11 +2,23 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.{js,css,json,jpg,jpeg,png,ico}",
       "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*\\.(html|js|css|json|jpg|jpeg|png|ico))",
+      "dest": "/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
@@ -19,8 +31,18 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=3600"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(index|resume-json|test-avatar)",
+      "destination": "/$1.html"
     }
   ]
 }
