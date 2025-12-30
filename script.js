@@ -28,4 +28,74 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`Contact link clicked: ${link.getAttribute('href')}`);
         });
     });
+
+    // Avatar upload functionality
+    const avatarInput = document.getElementById('avatar-input');
+    const profileAvatar = document.getElementById('profile-avatar');
+    
+    if (avatarInput && profileAvatar) {
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Check file type
+            if (!file.type.match('image.*')) {
+                alert('请选择图片文件 (JPG, PNG, GIF 等)');
+                return;
+            }
+            
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('图片大小不能超过 2MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                // Update avatar image
+                profileAvatar.src = e.target.result;
+                
+                // Save to localStorage for persistence
+                try {
+                    localStorage.setItem('resume_avatar', e.target.result);
+                    console.log('头像已保存到本地存储');
+                } catch (error) {
+                    console.warn('无法保存头像到本地存储:', error);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('读取图片失败，请重试');
+            };
+            
+            reader.readAsDataURL(file);
+        });
+        
+        // Load saved avatar from localStorage on page load
+        try {
+            const savedAvatar = localStorage.getItem('resume_avatar');
+            if (savedAvatar) {
+                profileAvatar.src = savedAvatar;
+            }
+        } catch (error) {
+            console.warn('无法从本地存储加载头像:', error);
+        }
+    }
+    
+    // Avatar reset functionality (optional)
+    const resetAvatar = () => {
+        const defaultAvatar = 'avatar.jpeg';
+        profileAvatar.src = defaultAvatar;
+        localStorage.removeItem('resume_avatar');
+        if (avatarInput) avatarInput.value = '';
+    };
+    
+    // Add reset button (optional, uncomment if needed)
+    // const resetBtn = document.createElement('button');
+    // resetBtn.textContent = '恢复默认头像';
+    // resetBtn.className = 'avatar-upload-btn';
+    // resetBtn.style.marginTop = '5px';
+    // resetBtn.onclick = resetAvatar;
+    // document.querySelector('.avatar-upload').appendChild(resetBtn);
 });

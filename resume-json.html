@@ -57,9 +57,18 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="profile-header">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" 
+                     alt="头像" 
+                     class="profile-avatar" 
+                     id="resume-avatar">
+                
                 <div class="name-tag">
                     <h1 id="resume-name">加载中...</h1>
                     <p class="title" id="resume-title">空间设计经理</p>
+                </div>
+                
+                <div class="avatar-upload">
+                    <p class="avatar-hint">头像来自 JSON 数据</p>
                 </div>
             </div>
 
@@ -149,6 +158,20 @@
             // 基本信息
             document.getElementById('resume-name').textContent = data.basic.name || '曾卫明';
             document.getElementById('resume-title').textContent = data.basic.title || '空间设计经理';
+            
+            // 头像
+            const avatarElement = document.getElementById('resume-avatar');
+            if (data.basic.photo) {
+                // 检查是否是 base64 数据
+                if (data.basic.photo.startsWith('data:image')) {
+                    avatarElement.src = data.basic.photo;
+                } else if (data.basic.photo.startsWith('http')) {
+                    avatarElement.src = data.basic.photo;
+                } else {
+                    // 假设是相对路径的文件名
+                    avatarElement.src = data.basic.photo;
+                }
+            }
 
             // 联系信息
             const contactSection = document.getElementById('contact-section');
