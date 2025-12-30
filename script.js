@@ -98,4 +98,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // resetBtn.style.marginTop = '5px';
     // resetBtn.onclick = resetAvatar;
     // document.querySelector('.avatar-upload').appendChild(resetBtn);
+
+    // PDF Export/Print functionality
+    const printPdfBtn = document.getElementById('print-pdf-btn');
+    if (printPdfBtn) {
+        printPdfBtn.addEventListener('click', () => {
+            // Hide navigation links during print
+            const navLinks = document.querySelector('.nav-links');
+            const originalDisplay = navLinks.style.display;
+            navLinks.style.display = 'none';
+            
+            // Print the page
+            window.print();
+            
+            // Restore navigation links after print
+            setTimeout(() => {
+                navLinks.style.display = originalDisplay || 'flex';
+            }, 100);
+        });
+    }
 });

@@ -52,6 +52,7 @@
     <div class="nav-links">
         <a href="index.html" class="nav-link">静态版本</a>
         <a href="resume-json.html" class="nav-link">JSON 版本</a>
+        <button id="print-pdf-btn" class="nav-link pdf-btn">📄 导出PDF</button>
     </div>
     <div class="app-container">
         <!-- Sidebar -->
@@ -86,6 +87,13 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <section class="skills-detailed-card" id="skills-detailed-section">
+                <h2>专业技能</h2>
+                <div class="skills-detailed-content">
+                    <!-- 专业技能详细内容会动态加载 -->
+                </div>
+            </section>
+
             <section class="summary-card">
                 <h2>个人优势</h2>
                 <div class="summary-content" id="summary-section">
@@ -127,8 +135,23 @@
 
     <script src="script.js"></script>
     <script>
-        // 显示加载状态
+        // PDF导出功能
         document.addEventListener('DOMContentLoaded', function() {
+            const printPdfBtn = document.getElementById('print-pdf-btn');
+            if (printPdfBtn) {
+                printPdfBtn.addEventListener('click', () => {
+                    const navLinks = document.querySelector('.nav-links');
+                    const originalDisplay = navLinks.style.display;
+                    navLinks.style.display = 'none';
+                    
+                    window.print();
+                    
+                    setTimeout(() => {
+                        navLinks.style.display = originalDisplay || 'flex';
+                    }, 100);
+                });
+            }
+            
             loadResumeData();
         });
 
@@ -175,6 +198,31 @@
 
             // 联系信息
             const contactSection = document.getElementById('contact-section');
+            const birthDate = data.basic.birthDate ? new Date(data.basic.birthDate).toISOString().split('T')[0] : '1984-10-31';
+            const employementStatus = data.basic.employementStatus || '离职';
+            
+            // 提取早期作品链接
+            let earlyWorksLink = '';
+            if (data.basic.customFields && data.basic.customFields.length > 0) {
+                const earlyWorksField = data.basic.customFields.find(field => field.label === '早期作品');
+                if (earlyWorksField && earlyWorksField.value) {
+                    // 提取URL
+                    const urlMatch = earlyWorksField.value.match(/https?:\/\/[^\s]+/);
+                    if (urlMatch) {
+                        earlyWorksLink = urlMatch[0];
+                    }
+                }
+            }
+            
+            // 提取求职意向
+            let jobIntention = '';
+            if (data.basic.customFields && data.basic.customFields.length > 0) {
+                const jobField = data.basic.customFields.find(field => field.label === '求职意向');
+                if (jobField && jobField.value) {
+                    jobIntention = jobField.value.replace('求职意向：', '');
+                }
+            }
+            
             contactSection.innerHTML = `
                 <div class="contact-item">
                     <span class="icon">📱</span>
@@ -182,7 +230,7 @@
                 </div>
                 <div class="contact-item">
                     <span class="icon">✉️</span>
-                    <a href="mailto:${data.basic.email || '64020093@qq.com'}">${data.basic.email || '64020093@qq.com'}</a>
+                    <a href="mailto:${data.basic.email || '64920093@qq.com'}">${data.basic.email || '64920093@qq.com'}</a>
                 </div>
                 <div class="contact-item">
                     <span class="icon">📍</span>
@@ -192,6 +240,26 @@
                     <span class="icon">🎓</span>
                     <span>${data.education[0]?.degree || '大专'} · ${data.education[0]?.major || '艺术设计'}</span>
                 </div>
+                <div class="contact-item">
+                    <span class="icon">📅</span>
+                    <span>${birthDate}</span>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">💼</span>
+                    <span>${employementStatus} · 求职中</span>
+                </div>
+                ${earlyWorksLink ? `
+                <div class="contact-item">
+                    <span class="icon">🌐</span>
+                    <a href="${earlyWorksLink}" target="_blank">早期作品：${earlyWorksLink.replace('https://', '').replace('http://', '')}</a>
+                </div>
+                ` : ''}
+                ${jobIntention ? `
+                <div class="contact-item">
+                    <span class="icon">🎯</span>
+                    <span>求职意向：${jobIntention}</span>
+                </div>
+                ` : ''}
             `;
 
             // 专业技能（从 skillContent 中提取）
@@ -216,6 +284,33 @@
             }
             
             skillsSection.innerHTML = skills.map(skill => `<span>${skill}</span>`).join('');
+
+            // 专业技能详细内容
+            const skillsDetailedSection = document.getElementById('skills-detailed-section');
+            if (data.skillContent) {
+                // 从 skillContent 中提取列表项
+                const skillContent = data.skillContent;
+                const liMatches = skillContent.match(/<li>.*?<\/li>/gs);
+                
+                if (liMatches && liMatches.length > 0) {
+                    const skillsDetailedHTML = liMatches.map(li => {
+                        // 提取纯文本内容，移除HTML标签但保留strong标签
+                        const text = li.replace(/<li>|<\/li>/g, '')
+                                        .replace(/<p>|<\/p>/g, '')
+                                        .replace(/class="[^"]*"/g, '');
+                        return `<li>${text}</li>`;
+                    }).join('');
+                    
+                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML = 
+                        `<ul class="skills-detailed-list">${skillsDetailedHTML}</ul>`;
+                } else {
+                    // 如果没有列表项，直接显示内容
+                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML = 
+                        `<div>${skillContent.replace(/<h3>.*?<\/h3>/g, '')}</div>`;
+                }
+            } else {
+                skillsDetailedSection.style.display = 'none';
+            }
 
             // 个人优势
             const summarySection = document.getElementById('summary-section');
