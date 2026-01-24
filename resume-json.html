@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,12 +17,14 @@
             font-size: 18px;
             color: #666;
         }
+
         .error {
             text-align: center;
             padding: 50px;
             color: #e74c3c;
             font-size: 18px;
         }
+
         .json-viewer {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -33,6 +36,7 @@
             max-height: 500px;
             overflow-y: auto;
         }
+
         .json-toggle {
             background: #007bff;
             color: white;
@@ -43,11 +47,13 @@
             margin: 10px 0;
             font-size: 14px;
         }
+
         .json-toggle:hover {
             background: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="nav-links">
         <a href="index.html" class="nav-link">静态版本</a>
@@ -58,16 +64,14 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="profile-header">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80" 
-                     alt="头像" 
-                     class="profile-avatar" 
-                     id="resume-avatar">
-                
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&q=80"
+                    alt="头像" class="profile-avatar" id="resume-avatar">
+
                 <div class="name-tag">
                     <h1 id="resume-name">加载中...</h1>
                     <p class="title" id="resume-title">空间设计经理</p>
                 </div>
-                
+
                 <div class="avatar-upload">
                     <p class="avatar-hint">头像来自 JSON 数据</p>
                 </div>
@@ -136,22 +140,22 @@
     <script src="script.js"></script>
     <script>
         // PDF导出功能
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const printPdfBtn = document.getElementById('print-pdf-btn');
             if (printPdfBtn) {
                 printPdfBtn.addEventListener('click', () => {
                     const navLinks = document.querySelector('.nav-links');
                     const originalDisplay = navLinks.style.display;
                     navLinks.style.display = 'none';
-                    
+
                     window.print();
-                    
+
                     setTimeout(() => {
                         navLinks.style.display = originalDisplay || 'flex';
                     }, 100);
                 });
             }
-            
+
             loadResumeData();
         });
 
@@ -162,17 +166,17 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const resumeData = await response.json();
-                
+
                 // 显示 JSON 数据
                 document.getElementById('json-data').textContent = JSON.stringify(resumeData, null, 2);
-                
+
                 // 渲染简历内容
                 renderResume(resumeData);
             } catch (error) {
                 console.error('加载简历数据失败:', error);
                 document.getElementById('resume-name').textContent = '加载失败';
                 document.getElementById('resume-title').textContent = '请检查 JSON 文件';
-                document.getElementById('contact-section').innerHTML = 
+                document.getElementById('contact-section').innerHTML =
                     '<div class="error">无法加载简历数据，请检查控制台错误信息。</div>';
             }
         }
@@ -181,7 +185,7 @@
             // 基本信息
             document.getElementById('resume-name').textContent = data.basic.name || '曾卫明';
             document.getElementById('resume-title').textContent = data.basic.title || '空间设计经理';
-            
+
             // 头像
             const avatarElement = document.getElementById('resume-avatar');
             if (data.basic.photo) {
@@ -200,7 +204,7 @@
             const contactSection = document.getElementById('contact-section');
             const birthDate = data.basic.birthDate ? new Date(data.basic.birthDate).toISOString().split('T')[0] : '1984-10-31';
             const employementStatus = data.basic.employementStatus || '离职';
-            
+
             // 提取早期作品链接
             let earlyWorksLink = '';
             if (data.basic.customFields && data.basic.customFields.length > 0) {
@@ -213,7 +217,7 @@
                     }
                 }
             }
-            
+
             // 提取求职意向
             let jobIntention = '';
             if (data.basic.customFields && data.basic.customFields.length > 0) {
@@ -222,7 +226,7 @@
                     jobIntention = jobField.value.replace('求职意向：', '');
                 }
             }
-            
+
             contactSection.innerHTML = `
                 <div class="contact-item">
                     <span class="icon">📱</span>
@@ -265,12 +269,12 @@
             // 专业技能（从 skillContent 中提取）
             const skillsSection = document.getElementById('skills-section');
             const skillKeywords = [
-                '3ds Max', 'Vray', 'SketchUp', 'SU', '酷家乐', 'AutoCAD', 
+                '3ds Max', 'Vray', 'SketchUp', 'SU', '酷家乐', 'AutoCAD',
                 'Illustrator', 'AI', 'Photoshop', 'PS', 'Python', 'AI编程',
                 '空间建模', '渲染', '施工图', '效果图', '品牌视觉', '橱窗设计',
-                'DP点', '陈列道具', '工程量预决算', '模块化', '标准化'
+                'DP点', 'DP开发设计', '陈列道具', '工程量预决算', '模块化', '标准化', 'C1 驾照', '低压电工'
             ];
-            
+
             let skills = [];
             const skillContent = data.skillContent || '';
             for (const keyword of skillKeywords) {
@@ -278,11 +282,11 @@
                     skills.push(keyword);
                 }
             }
-            
+
             if (skills.length === 0) {
                 skills = ['空间设计', '工程管理', '品牌形象开发', '施工监理', '成本控制'];
             }
-            
+
             skillsSection.innerHTML = skills.map(skill => `<span>${skill}</span>`).join('');
 
             // 专业技能详细内容
@@ -291,21 +295,21 @@
                 // 从 skillContent 中提取列表项
                 const skillContent = data.skillContent;
                 const liMatches = skillContent.match(/<li>.*?<\/li>/gs);
-                
+
                 if (liMatches && liMatches.length > 0) {
                     const skillsDetailedHTML = liMatches.map(li => {
                         // 提取纯文本内容，移除HTML标签但保留strong标签
                         const text = li.replace(/<li>|<\/li>/g, '')
-                                        .replace(/<p>|<\/p>/g, '')
-                                        .replace(/class="[^"]*"/g, '');
+                            .replace(/<p>|<\/p>/g, '')
+                            .replace(/class="[^"]*"/g, '');
                         return `<li>${text}</li>`;
                     }).join('');
-                    
-                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML = 
+
+                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML =
                         `<ul class="skills-detailed-list">${skillsDetailedHTML}</ul>`;
                 } else {
                     // 如果没有列表项，直接显示内容
-                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML = 
+                    skillsDetailedSection.querySelector('.skills-detailed-content').innerHTML =
                         `<div>${skillContent.replace(/<h3>.*?<\/h3>/g, '')}</div>`;
                 }
             } else {
@@ -386,4 +390,5 @@
         }
     </script>
 </body>
+
 </html>
